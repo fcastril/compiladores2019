@@ -10,6 +10,7 @@ namespace Compiladores2019.Console
     {
         static void Main(string[] args)
         {
+
         }
     }
 }
