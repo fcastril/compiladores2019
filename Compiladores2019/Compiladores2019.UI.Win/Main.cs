@@ -52,7 +52,7 @@ namespace Compiladores2019.UI.Win
             }
             if (conteo == 0)
             {
-                MessageBox.Show("Hay Estados Iniciales que no se encuentran en la definición de estados","Estados Iniciales",MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Hay Estados Iniciales que no se encuentran en la definición de estados", "Estados Iniciales", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -83,7 +83,7 @@ namespace Compiladores2019.UI.Win
             }
             if (states.Count() <= 0)
             {
-                MessageBox.Show("No se definieron Estados","Estado",MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("No se definieron Estados", "Estado", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
@@ -98,10 +98,117 @@ namespace Compiladores2019.UI.Win
                 return;
             }
 
+            bool lentro = false;
+            lentro = (statesBegin.Count() > 1);// Adicionar la parte de la tabla de transiciones
 
-            if (statesBegin.Count() == 1 ) // Adicionar la parte de la tabla de transiciones
+
+            foreach (var item in transitions)
             {
-                MessageBox.Show("Un AFND debe tener más de un estado de inicio o un Estado tenga mas de una transición","AFND",MessageBoxButtons.OK, MessageBoxIcon.Error);
+                if (item.Value1.Split(';').Length > 1)
+                {
+                    lentro = true;
+                    break;
+                }
+                if (item.Value2.Split(';').Length > 1)
+                {
+                    lentro = true;
+                    break;
+                }
+                if (item.Value3.Split(';').Length > 1)
+                {
+                    lentro = true;
+                    break;
+                }
+                if (item.Value4.Split(';').Length > 1)
+                {
+                    lentro = true;
+                    break;
+                }
+                if (item.Value5.Split(';').Length > 1)
+                {
+                    lentro = true;
+                    break;
+                }
+                if (item.Value6.Split(';').Length > 1)
+                {
+                    lentro = true;
+                    break;
+                }
+                if (item.Value7.Split(';').Length > 1)
+                {
+                    lentro = true;
+                    break;
+                }
+                if (item.Value8.Split(';').Length > 1)
+                {
+                    lentro = true;
+                    break;
+                }
+                if (item.Value9.Split(';').Length > 1)
+                {
+                    lentro = true;
+                    break;
+                }
+                if (item.Value10.Split(';').Length > 1)
+                {
+                    lentro = true;
+                    break;
+                }
+                if (item.Value11.Split(';').Length > 1)
+                {
+                    lentro = true;
+                    break;
+                }
+                if (item.Value12.Split(';').Length > 1)
+                {
+                    lentro = true;
+                    break;
+                }
+                if (item.Value13.Split(';').Length > 1)
+                {
+                    lentro = true;
+                    break;
+                }
+                if (item.Value14.Split(';').Length > 1)
+                {
+                    lentro = true;
+                    break;
+                }
+                if (item.Value15.Split(';').Length > 1)
+                {
+                    lentro = true;
+                    break;
+                }
+                if (item.Value16.Split(';').Length > 1)
+                {
+                    lentro = true;
+                    break;
+                }
+                if (item.Value17.Split(';').Length > 1)
+                {
+                    lentro = true;
+                    break;
+                }
+                if (item.Value18.Split(';').Length > 1)
+                {
+                    lentro = true;
+                    break;
+                }
+                if (item.Value19.Split(';').Length > 1)
+                {
+                    lentro = true;
+                    break;
+                }
+                if (item.Value20.Split(';').Length > 1)
+                {
+                    lentro = true;
+                    break;
+                }
+            }
+
+            if (!lentro) // Adicionar la parte de la tabla de transiciones
+            {
+                MessageBox.Show("Un AFND debe tener más de un estado de inicio o un Estado tenga mas de una transición", "AFND", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
@@ -109,7 +216,7 @@ namespace Compiladores2019.UI.Win
 
         private void btnGenerar_Click(object sender, EventArgs e)
         {
-            transitions = new List<itemGrid>(); 
+            transitions = new List<itemGrid>();
             foreach (var item in states)
             {
                 itemGrid ig = new itemGrid();
@@ -123,7 +230,7 @@ namespace Compiladores2019.UI.Win
             for (int i = 1; i <= 20; i++)
             {
                 dataGridView1.Columns[i].Visible = false;
-               
+
             }
             int j = 1;
             foreach (var item in symbolsIn)
@@ -137,8 +244,24 @@ namespace Compiladores2019.UI.Win
 
         private void dataGridView1_CellValidating(object sender, DataGridViewCellValidatingEventArgs e)
         {
-
-
+            bool lentro = false;
+            string[] valores = e.FormattedValue.ToString().Split(';');
+            foreach (string item in valores)
+            {
+                if (!string.IsNullOrEmpty(item.Trim()))
+                {
+                    if (states.Where(s => s == item).Count() == 0)
+                    {
+                        lentro = true;
+                        break;
+                    }
+                }
+            }
+            if (lentro)
+            {
+                MessageBox.Show("Debe ingresar estados adecuados", "Estados", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
         }
     }
 }
