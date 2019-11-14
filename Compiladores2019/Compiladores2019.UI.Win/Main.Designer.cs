@@ -37,11 +37,14 @@
             this.lblStatesBegin = new System.Windows.Forms.Label();
             this.txtAcceptations = new System.Windows.Forms.TextBox();
             this.lblAcceptations = new System.Windows.Forms.Label();
-            this.btnAceptar = new System.Windows.Forms.Button();
+            this.btnValidacionAFND = new System.Windows.Forms.Button();
             this.btnCancelar = new System.Windows.Forms.Button();
             this.btnGenerar = new System.Windows.Forms.Button();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
+            this.btnPaso01 = new System.Windows.Forms.Button();
+            this.dataGridView2 = new System.Windows.Forms.DataGridView();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).BeginInit();
             this.SuspendLayout();
             // 
             // lblTitulo
@@ -121,25 +124,25 @@
             this.lblAcceptations.TabIndex = 7;
             this.lblAcceptations.Text = "Estado(s) de aceptación  [(;) Punto y Coma para Separar]";
             // 
-            // btnAceptar
+            // btnValidacionAFND
             // 
-            this.btnAceptar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnAceptar.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnAceptar.ForeColor = System.Drawing.Color.Blue;
-            this.btnAceptar.Location = new System.Drawing.Point(606, 415);
-            this.btnAceptar.Name = "btnAceptar";
-            this.btnAceptar.Size = new System.Drawing.Size(75, 23);
-            this.btnAceptar.TabIndex = 9;
-            this.btnAceptar.Text = "Aceptar";
-            this.btnAceptar.UseVisualStyleBackColor = true;
-            this.btnAceptar.Click += new System.EventHandler(this.btnAceptar_Click);
+            this.btnValidacionAFND.Enabled = false;
+            this.btnValidacionAFND.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnValidacionAFND.ForeColor = System.Drawing.Color.Blue;
+            this.btnValidacionAFND.Location = new System.Drawing.Point(21, 253);
+            this.btnValidacionAFND.Name = "btnValidacionAFND";
+            this.btnValidacionAFND.Size = new System.Drawing.Size(278, 23);
+            this.btnValidacionAFND.TabIndex = 9;
+            this.btnValidacionAFND.Text = "¿ Es un AFND ?";
+            this.btnValidacionAFND.UseVisualStyleBackColor = true;
+            this.btnValidacionAFND.Click += new System.EventHandler(this.btnValidacionAFND_Click);
             // 
             // btnCancelar
             // 
             this.btnCancelar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnCancelar.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnCancelar.ForeColor = System.Drawing.Color.Red;
-            this.btnCancelar.Location = new System.Drawing.Point(687, 415);
+            this.btnCancelar.Location = new System.Drawing.Point(1166, 415);
             this.btnCancelar.Name = "btnCancelar";
             this.btnCancelar.Size = new System.Drawing.Size(75, 23);
             this.btnCancelar.TabIndex = 10;
@@ -168,15 +171,38 @@
             this.dataGridView1.TabIndex = 12;
             this.dataGridView1.CellValidating += new System.Windows.Forms.DataGridViewCellValidatingEventHandler(this.dataGridView1_CellValidating);
             // 
+            // btnPaso01
+            // 
+            this.btnPaso01.Enabled = false;
+            this.btnPaso01.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnPaso01.ForeColor = System.Drawing.Color.Orange;
+            this.btnPaso01.Location = new System.Drawing.Point(21, 282);
+            this.btnPaso01.Name = "btnPaso01";
+            this.btnPaso01.Size = new System.Drawing.Size(278, 23);
+            this.btnPaso01.TabIndex = 13;
+            this.btnPaso01.Text = "Paso 01 - Normalizar Estados";
+            this.btnPaso01.UseVisualStyleBackColor = true;
+            this.btnPaso01.Click += new System.EventHandler(this.btnPaso01_Click);
+            // 
+            // dataGridView2
+            // 
+            this.dataGridView2.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridView2.Location = new System.Drawing.Point(784, 43);
+            this.dataGridView2.Name = "dataGridView2";
+            this.dataGridView2.Size = new System.Drawing.Size(460, 366);
+            this.dataGridView2.TabIndex = 14;
+            // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(790, 450);
+            this.ClientSize = new System.Drawing.Size(1253, 450);
+            this.Controls.Add(this.dataGridView2);
+            this.Controls.Add(this.btnPaso01);
             this.Controls.Add(this.dataGridView1);
             this.Controls.Add(this.btnGenerar);
             this.Controls.Add(this.btnCancelar);
-            this.Controls.Add(this.btnAceptar);
+            this.Controls.Add(this.btnValidacionAFND);
             this.Controls.Add(this.txtAcceptations);
             this.Controls.Add(this.lblAcceptations);
             this.Controls.Add(this.txtStatesBegin);
@@ -189,6 +215,7 @@
             this.Name = "Main";
             this.Text = "Compiladores";
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -205,10 +232,12 @@
         private System.Windows.Forms.Label lblStatesBegin;
         private System.Windows.Forms.TextBox txtAcceptations;
         private System.Windows.Forms.Label lblAcceptations;
-        private System.Windows.Forms.Button btnAceptar;
+        private System.Windows.Forms.Button btnValidacionAFND;
         private System.Windows.Forms.Button btnCancelar;
         private System.Windows.Forms.Button btnGenerar;
         private System.Windows.Forms.DataGridView dataGridView1;
+        private System.Windows.Forms.Button btnPaso01;
+        private System.Windows.Forms.DataGridView dataGridView2;
     }
 }
 

@@ -19,6 +19,7 @@ namespace Compiladores2019.UI.Win
         private List<string> acceptations => Lista(txtAcceptations.Text.Split(';'));
         private List<string> symbolsIn => Lista(txtSymbolsIN.Text.Split(';'));
         private List<itemGrid> transitions { get; set; }
+        private List<itemGrid> AFD { get; set; }
 
         private List<string> Lista(string[] data)
         {
@@ -73,7 +74,7 @@ namespace Compiladores2019.UI.Win
             }
         }
 
-        private void btnAceptar_Click(object sender, EventArgs e)
+        private void btnValidacionAFND_Click(object sender, EventArgs e)
         {
             // Validación que para un AFND 
             if (symbolsIn.Count() <= 0)
@@ -208,8 +209,13 @@ namespace Compiladores2019.UI.Win
 
             if (!lentro) // Adicionar la parte de la tabla de transiciones
             {
-                MessageBox.Show("Un AFND debe tener más de un estado de inicio o un Estado tenga mas de una transición", "AFND", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("NO! Un AFND debe tener más de un estado de inicio o un Estado tenga mas de una transición", "AFND", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
+            }
+            else
+            {
+                MessageBox.Show("Si! Correcto es un AFND", "AFND", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                btnPaso01.Enabled = true;
             }
 
         }
@@ -217,17 +223,18 @@ namespace Compiladores2019.UI.Win
         private void btnGenerar_Click(object sender, EventArgs e)
         {
             transitions = new List<itemGrid>();
+            int i = 0;
             foreach (var item in states)
             {
                 itemGrid ig = new itemGrid();
                 ig.State = item;
                 transitions.Add(ig);
+                i++;
             }
-            dataGridView1.DataSource = transitions;
             dataGridView1.Columns[0].Visible = true;
             dataGridView1.Columns[0].ReadOnly = true;
 
-            for (int i = 1; i <= 20; i++)
+            for (i = 1; i <= 20; i++)
             {
                 dataGridView1.Columns[i].Visible = false;
 
@@ -239,6 +246,7 @@ namespace Compiladores2019.UI.Win
                 dataGridView1.Columns[j].Visible = true;
                 j++;
             }
+            btnValidacionAFND.Enabled = true;
 
         }
 
@@ -261,6 +269,42 @@ namespace Compiladores2019.UI.Win
             {
                 MessageBox.Show("Debe ingresar estados adecuados", "Estados", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
+            }
+        }
+
+        private void btnPaso01_Click(object sender, EventArgs e)
+        {
+            // recorrer matriz y crear la nueva con los estados de AFDN
+            AFD = new List<itemGrid>();
+            int i = 0;
+            string value = "";
+
+            // Primero en Linea
+            // Verificar inicio
+
+            value = txtStatesBegin.Text.Replace(";", "");
+            while (value != "")
+            {
+                itemGrid id = transitions.Where(t => t.State == value).FirstOrDefault();
+                
+            }
+            
+
+            dataGridView2.DataSource = AFD;
+            dataGridView2.Columns[0].Visible = true;
+            dataGridView2.Columns[0].ReadOnly = true;
+
+            for (int r = 1; r <= 20; r++)
+            {
+                dataGridView2.Columns[r].Visible = false;
+
+            }
+            int y = 1;
+            foreach (var item in symbolsIn)
+            {
+                dataGridView2.Columns[y].HeaderText = item;
+                dataGridView2.Columns[y].Visible = true;
+                y++;
             }
         }
     }
