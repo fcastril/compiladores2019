@@ -231,21 +231,34 @@ namespace Compiladores2019.UI.Win
                 transitions.Add(ig);
                 i++;
             }
-            dataGridView1.Columns[0].Visible = true;
-            dataGridView1.Columns[0].ReadOnly = true;
 
-            for (i = 1; i <= 20; i++)
-            {
-                dataGridView1.Columns[i].Visible = false;
+            dataGridView1.Columns.Clear();
+            dataGridView1.AutoGenerateColumns = false;
+            DataGridViewCell cell = new DataGridViewTextBoxCell();
+                
+            DataGridViewColumn column = new DataGridViewColumn();
+            column.HeaderText = "Estados";
+            column.DataPropertyName = "State";
+            column.Name = "State";
+            column.Visible = true;
+            column.ReadOnly = true;
+            column.CellTemplate = cell;
+            dataGridView1.Columns.Add(column);
 
-            }
-            int j = 1;
+            i = 0;
             foreach (var item in symbolsIn)
             {
-                dataGridView1.Columns[j].HeaderText = item;
-                dataGridView1.Columns[j].Visible = true;
-                j++;
+                i++;
+                column = new DataGridViewColumn();
+                column.DataPropertyName =$"Value{i}";
+                column.Name = $"Value{i}";
+                column.HeaderText = item;
+                column.Visible = true;
+                column.ReadOnly = false;
+                column.CellTemplate = cell;
+                dataGridView1.Columns.Add(column);
             }
+            dataGridView1.DataSource = transitions;
             btnValidacionAFND.Enabled = true;
 
         }
@@ -281,30 +294,152 @@ namespace Compiladores2019.UI.Win
 
             // Primero en Linea
             // Verificar inicio
+            value = txtStatesBegin.Text;
+            itemGrid comparador = transitions.Where(a => a.State == value).FirstOrDefault();
+            AFD.Add(comparador);
 
-            value = txtStatesBegin.Text.Replace(";", "");
-            while (value != "")
-            {
-                itemGrid id = transitions.Where(t => t.State == value).FirstOrDefault();
-                
-            }
-            
 
-            dataGridView2.DataSource = AFD;
-            dataGridView2.Columns[0].Visible = true;
-            dataGridView2.Columns[0].ReadOnly = true;
 
-            for (int r = 1; r <= 20; r++)
-            {
-                dataGridView2.Columns[r].Visible = false;
+            Llenar(comparador.Value1);
 
-            }
-            int y = 1;
+            dataGridView2.Columns.Clear();
+            dataGridView2.AutoGenerateColumns = false;
+            DataGridViewCell cell = new DataGridViewTextBoxCell();
+
+            DataGridViewColumn column = new DataGridViewColumn();
+            column.HeaderText = "Estados";
+            column.DataPropertyName = "State";
+            column.Name = "State";
+            column.Visible = true;
+            column.ReadOnly = true;
+            column.CellTemplate = cell;
+            dataGridView2.Columns.Add(column);
+
+            i = 0;
             foreach (var item in symbolsIn)
             {
-                dataGridView2.Columns[y].HeaderText = item;
-                dataGridView2.Columns[y].Visible = true;
-                y++;
+                i++;
+                column = new DataGridViewColumn();
+                column.DataPropertyName = $"Value{i}";
+                column.Name = $"Value{i}";
+                column.HeaderText = item;
+                column.Visible = true;
+                column.ReadOnly = false;
+                column.CellTemplate = cell;
+                dataGridView2.Columns.Add(column);
+            }
+            dataGridView2.DataSource = AFD;
+        }
+        private void Llenar(string value)
+        {
+            itemGrid ret = new itemGrid();
+            itemGrid comparador = AFD.Where(a => a.State == value).FirstOrDefault();
+            if (comparador == null)
+            {
+                ret.State = value;
+                AFD.Add(ret);
+                string nval = string.Empty;
+                if (value.Contains(";"))
+                {
+                    foreach (string v in value.Split(';'))
+                    {
+                        if (v != string.Empty)
+                        {
+                            ret = transitions.Where(t => t.State == v).FirstOrDefault();
+                            if (ret.Value1 != string.Empty)
+                            {
+                                nval += nval.Length > 0 ? ";" : "";
+                                nval += $"{ret.Value1}";
+                            }
+                        }
+                    }
+                    nval = nval == string.Empty ? "ERROR" : nval;
+                    if (AFD.Where(c => c.State == nval).Count() == 0)
+                    {
+                        Llenar(nval);
+                    }
+                    nval = string.Empty;
+                    foreach (string v in value.Split(';'))
+                    {
+                        if (v != string.Empty)
+                        {
+                            ret = transitions.Where(t => t.State == v).FirstOrDefault();
+                            if (ret.Value2 != string.Empty)
+                            {
+                                nval += nval.Length > 0 ? ";" : "";
+                                nval += $"{ret.Value2}";
+                            }
+                        }
+                    }
+                    nval = nval == string.Empty ? "ERROR" : nval;
+                    if (AFD.Where(c => c.State == nval).Count() == 0)
+                    {
+                        Llenar(nval);
+                    }
+
+                }
+                else
+                {
+                    ret = transitions.Where(a => a.State == value).FirstOrDefault();
+                    string val = ret.Value1.Trim();
+                    if (val.Contains(";"))
+                    {
+                        nval = string.Empty;
+                        foreach (var v in val.Split(';'))
+                        {
+
+                            if (v != string.Empty)
+                            {
+                                ret = transitions.Where(t => t.State == v).FirstOrDefault();
+                                if (ret.Value1 != string.Empty)
+                                {
+                                    nval += nval.Length > 0 ? ";" : "";
+                                    nval += $"{ret.Value1}";
+                                }
+                            }
+                        }
+                        nval = nval == string.Empty ? "ERROR" : nval;
+                        if (AFD.Where(c => c.State == nval).Count() == 0)
+                        {
+                            Llenar(nval);
+                        }
+
+                        nval = string.Empty;
+                        foreach (var v in val.Split(';'))
+                        {
+
+                            if (v != string.Empty)
+                            {
+                                ret = transitions.Where(t => t.State == v).FirstOrDefault();
+                                if (ret.Value2 != string.Empty)
+                                {
+                                    nval += nval.Length > 0 ? ";" : "";
+                                    nval += $"{ret.Value2}";
+                                }
+                            }
+                        }
+                        nval = nval == string.Empty ? "ERROR" : nval;
+                        if (AFD.Where(c => c.State == nval).Count() == 0)
+                        {
+                            Llenar(nval);
+                        }
+
+                    }
+                    else
+                    {
+                        val = val == string.Empty ? "ERROR" : val;
+                        if (AFD.Where(c => c.State == val).Count() == 0)
+                        {
+                            Llenar(val);
+                        }
+                    }
+                }
+                //val = ret.Value2.Trim();
+                //val = val == string.Empty ? "ERROR" : val;
+                //if (AFD.Where(c => c.State == val).Count() == 0)
+                //{
+                //    Llenar(val);
+                //}
             }
         }
     }
