@@ -1,9 +1,9 @@
-﻿using System;
+﻿using Compiladores2019.Common;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Windows.Forms;
 using System.Linq;
-using Compiladores2019.Common;
+using System.Windows.Forms;
 
 namespace Compiladores2019.UI.Win
 {
@@ -105,106 +105,132 @@ namespace Compiladores2019.UI.Win
 
             foreach (var item in transitions)
             {
-                if (item.Value1.Split(';').Length > 1)
+                string value = "";
+                Type type = typeof(itemGrid);
+
+                System.Reflection.PropertyInfo[] listaPropiedades = type.GetProperties();
+                foreach (System.Reflection.PropertyInfo propiedad in listaPropiedades)
                 {
-                    lentro = true;
+                    if (propiedad.Name != "State")
+                    {
+                        value = propiedad.GetValue(item).ToString();
+                        if (value.Split(';').Length > 1)
+                        {
+                            lentro = true;
+                            break;
+                        }
+                    }
+                    if (lentro)
+                    {
+                        break;
+                    }
+                }
+                if (lentro)
+                {
                     break;
                 }
-                if (item.Value2.Split(';').Length > 1)
-                {
-                    lentro = true;
-                    break;
-                }
-                if (item.Value3.Split(';').Length > 1)
-                {
-                    lentro = true;
-                    break;
-                }
-                if (item.Value4.Split(';').Length > 1)
-                {
-                    lentro = true;
-                    break;
-                }
-                if (item.Value5.Split(';').Length > 1)
-                {
-                    lentro = true;
-                    break;
-                }
-                if (item.Value6.Split(';').Length > 1)
-                {
-                    lentro = true;
-                    break;
-                }
-                if (item.Value7.Split(';').Length > 1)
-                {
-                    lentro = true;
-                    break;
-                }
-                if (item.Value8.Split(';').Length > 1)
-                {
-                    lentro = true;
-                    break;
-                }
-                if (item.Value9.Split(';').Length > 1)
-                {
-                    lentro = true;
-                    break;
-                }
-                if (item.Value10.Split(';').Length > 1)
-                {
-                    lentro = true;
-                    break;
-                }
-                if (item.Value11.Split(';').Length > 1)
-                {
-                    lentro = true;
-                    break;
-                }
-                if (item.Value12.Split(';').Length > 1)
-                {
-                    lentro = true;
-                    break;
-                }
-                if (item.Value13.Split(';').Length > 1)
-                {
-                    lentro = true;
-                    break;
-                }
-                if (item.Value14.Split(';').Length > 1)
-                {
-                    lentro = true;
-                    break;
-                }
-                if (item.Value15.Split(';').Length > 1)
-                {
-                    lentro = true;
-                    break;
-                }
-                if (item.Value16.Split(';').Length > 1)
-                {
-                    lentro = true;
-                    break;
-                }
-                if (item.Value17.Split(';').Length > 1)
-                {
-                    lentro = true;
-                    break;
-                }
-                if (item.Value18.Split(';').Length > 1)
-                {
-                    lentro = true;
-                    break;
-                }
-                if (item.Value19.Split(';').Length > 1)
-                {
-                    lentro = true;
-                    break;
-                }
-                if (item.Value20.Split(';').Length > 1)
-                {
-                    lentro = true;
-                    break;
-                }
+
+
+                //if (item.Value1.Split(';').Length > 1)
+                //{
+                //    lentro = true;
+                //    break;
+                //}
+                //if (item.Value2.Split(';').Length > 1)
+                //{
+                //    lentro = true;
+                //    break;
+                //}
+                //if (item.Value3.Split(';').Length > 1)
+                //{
+                //    lentro = true;
+                //    break;
+                //}
+                //if (item.Value4.Split(';').Length > 1)
+                //{
+                //    lentro = true;
+                //    break;
+                //}
+                //if (item.Value5.Split(';').Length > 1)
+                //{
+                //    lentro = true;
+                //    break;
+                //}
+                //if (item.Value6.Split(';').Length > 1)
+                //{
+                //    lentro = true;
+                //    break;
+                //}
+                //if (item.Value7.Split(';').Length > 1)
+                //{
+                //    lentro = true;
+                //    break;
+                //}
+                //if (item.Value8.Split(';').Length > 1)
+                //{
+                //    lentro = true;
+                //    break;
+                //}
+                //if (item.Value9.Split(';').Length > 1)
+                //{
+                //    lentro = true;
+                //    break;
+                //}
+                //if (item.Value10.Split(';').Length > 1)
+                //{
+                //    lentro = true;
+                //    break;
+                //}
+                //if (item.Value11.Split(';').Length > 1)
+                //{
+                //    lentro = true;
+                //    break;
+                //}
+                //if (item.Value12.Split(';').Length > 1)
+                //{
+                //    lentro = true;
+                //    break;
+                //}
+                //if (item.Value13.Split(';').Length > 1)
+                //{
+                //    lentro = true;
+                //    break;
+                //}
+                //if (item.Value14.Split(';').Length > 1)
+                //{
+                //    lentro = true;
+                //    break;
+                //}
+                //if (item.Value15.Split(';').Length > 1)
+                //{
+                //    lentro = true;
+                //    break;
+                //}
+                //if (item.Value16.Split(';').Length > 1)
+                //{
+                //    lentro = true;
+                //    break;
+                //}
+                //if (item.Value17.Split(';').Length > 1)
+                //{
+                //    lentro = true;
+                //    break;
+                //}
+                //if (item.Value18.Split(';').Length > 1)
+                //{
+                //    lentro = true;
+                //    break;
+                //}
+                //if (item.Value19.Split(';').Length > 1)
+                //{
+                //    lentro = true;
+                //    break;
+                //}
+                //if (item.Value20.Split(';').Length > 1)
+                //{
+                //    lentro = true;
+                //    break;
+                //}
             }
 
             if (!lentro) // Adicionar la parte de la tabla de transiciones
@@ -233,9 +259,10 @@ namespace Compiladores2019.UI.Win
             }
 
             dataGridView1.Columns.Clear();
+            dataGridView2.Columns.Clear();
             dataGridView1.AutoGenerateColumns = false;
             DataGridViewCell cell = new DataGridViewTextBoxCell();
-                
+
             DataGridViewColumn column = new DataGridViewColumn();
             column.HeaderText = "Estados";
             column.DataPropertyName = "State";
@@ -250,7 +277,7 @@ namespace Compiladores2019.UI.Win
             {
                 i++;
                 column = new DataGridViewColumn();
-                column.DataPropertyName =$"Value{i}";
+                column.DataPropertyName = $"Value{i}";
                 column.Name = $"Value{i}";
                 column.HeaderText = item;
                 column.Visible = true;
@@ -296,11 +323,27 @@ namespace Compiladores2019.UI.Win
             // Verificar inicio
             value = txtStatesBegin.Text;
             itemGrid comparador = transitions.Where(a => a.State == value).FirstOrDefault();
-            AFD.Add(comparador);
+            itemGrid addAFD = new itemGrid();
+            addAFD.State = comparador.State;
+            value = comparador.Value1;
 
+            AFD.Add(addAFD);
+            Type type = typeof(itemGrid);
 
+            System.Reflection.PropertyInfo[] listaPropiedades = type.GetProperties();
+            foreach (System.Reflection.PropertyInfo propiedad in listaPropiedades)
+            {
+                if (propiedad.Name != "State")
+                {
+                    value = propiedad.GetValue(comparador).ToString();
+                    if (value != string.Empty)
+                    {
+                        Llenar(value);
+                    }
+                }
+            }
 
-            Llenar(comparador.Value1);
+            //Llenar(comparador.Value1);
 
             dataGridView2.Columns.Clear();
             dataGridView2.AutoGenerateColumns = false;
@@ -353,7 +396,7 @@ namespace Compiladores2019.UI.Win
                             }
                         }
                     }
-                    nval = nval == string.Empty ? "ERROR" : nval;
+                    //     nval = nval == string.Empty ? "ERROR" : nval;
                     if (AFD.Where(c => c.State == nval).Count() == 0)
                     {
                         Llenar(nval);
@@ -371,7 +414,7 @@ namespace Compiladores2019.UI.Win
                             }
                         }
                     }
-                    nval = nval == string.Empty ? "ERROR" : nval;
+                    //   nval = nval == string.Empty ? "ERROR" : nval;
                     if (AFD.Where(c => c.State == nval).Count() == 0)
                     {
                         Llenar(nval);
@@ -380,57 +423,60 @@ namespace Compiladores2019.UI.Win
                 }
                 else
                 {
-                    ret = transitions.Where(a => a.State == value).FirstOrDefault();
-                    string val = ret.Value1.Trim();
-                    if (val.Contains(";"))
+                    if (value != string.Empty)
                     {
-                        nval = string.Empty;
-                        foreach (var v in val.Split(';'))
+                        ret = transitions.Where(a => a.State == value).FirstOrDefault();
+                        string val = ret.Value1.Trim();
+                        if (val.Contains(";"))
                         {
-
-                            if (v != string.Empty)
+                            nval = string.Empty;
+                            foreach (var v in val.Split(';'))
                             {
-                                ret = transitions.Where(t => t.State == v).FirstOrDefault();
-                                if (ret.Value1 != string.Empty)
+
+                                if (v != string.Empty)
                                 {
-                                    nval += nval.Length > 0 ? ";" : "";
-                                    nval += $"{ret.Value1}";
+                                    ret = transitions.Where(t => t.State == v).FirstOrDefault();
+                                    if (ret.Value1 != string.Empty)
+                                    {
+                                        nval += nval.Length > 0 ? ";" : "";
+                                        nval += $"{ret.Value1}";
+                                    }
                                 }
                             }
-                        }
-                        nval = nval == string.Empty ? "ERROR" : nval;
-                        if (AFD.Where(c => c.State == nval).Count() == 0)
-                        {
-                            Llenar(nval);
-                        }
-
-                        nval = string.Empty;
-                        foreach (var v in val.Split(';'))
-                        {
-
-                            if (v != string.Empty)
+                            //         nval = nval == string.Empty ? "ERROR" : nval;
+                            if (AFD.Where(c => c.State == nval).Count() == 0)
                             {
-                                ret = transitions.Where(t => t.State == v).FirstOrDefault();
-                                if (ret.Value2 != string.Empty)
+                                Llenar(nval);
+                            }
+
+                            nval = string.Empty;
+                            foreach (var v in val.Split(';'))
+                            {
+
+                                if (v != string.Empty)
                                 {
-                                    nval += nval.Length > 0 ? ";" : "";
-                                    nval += $"{ret.Value2}";
+                                    ret = transitions.Where(t => t.State == v).FirstOrDefault();
+                                    if (ret.Value2 != string.Empty)
+                                    {
+                                        nval += nval.Length > 0 ? ";" : "";
+                                        nval += $"{ret.Value2}";
+                                    }
                                 }
                             }
-                        }
-                        nval = nval == string.Empty ? "ERROR" : nval;
-                        if (AFD.Where(c => c.State == nval).Count() == 0)
-                        {
-                            Llenar(nval);
-                        }
+                            // nval = nval == string.Empty ? "ERROR" : nval;
+                            if (AFD.Where(c => c.State == nval).Count() == 0)
+                            {
+                                Llenar(nval);
+                            }
 
-                    }
-                    else
-                    {
-                        val = val == string.Empty ? "ERROR" : val;
-                        if (AFD.Where(c => c.State == val).Count() == 0)
+                        }
+                        else
                         {
-                            Llenar(val);
+                            //val = val == string.Empty ? "ERROR" : val;
+                            if (AFD.Where(c => c.State == val).Count() == 0)
+                            {
+                                Llenar(val);
+                            }
                         }
                     }
                 }
