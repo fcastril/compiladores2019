@@ -23,6 +23,7 @@
         public string Value18 { get; set; }
         public string Value19 { get; set; }
         public string Value20 { get; set; }
+        public int Result { get; set; }
         public itemGrid()
         {
             Value1 = string.Empty;
@@ -45,6 +46,7 @@
             Value18 = string.Empty;
             Value19 = string.Empty;
             Value20 = string.Empty;
+            Result = 0;
         }
     }
 }

@@ -130,107 +130,6 @@ namespace Compiladores2019.UI.Win
                     break;
                 }
 
-
-                //if (item.Value1.Split(';').Length > 1)
-                //{
-                //    lentro = true;
-                //    break;
-                //}
-                //if (item.Value2.Split(';').Length > 1)
-                //{
-                //    lentro = true;
-                //    break;
-                //}
-                //if (item.Value3.Split(';').Length > 1)
-                //{
-                //    lentro = true;
-                //    break;
-                //}
-                //if (item.Value4.Split(';').Length > 1)
-                //{
-                //    lentro = true;
-                //    break;
-                //}
-                //if (item.Value5.Split(';').Length > 1)
-                //{
-                //    lentro = true;
-                //    break;
-                //}
-                //if (item.Value6.Split(';').Length > 1)
-                //{
-                //    lentro = true;
-                //    break;
-                //}
-                //if (item.Value7.Split(';').Length > 1)
-                //{
-                //    lentro = true;
-                //    break;
-                //}
-                //if (item.Value8.Split(';').Length > 1)
-                //{
-                //    lentro = true;
-                //    break;
-                //}
-                //if (item.Value9.Split(';').Length > 1)
-                //{
-                //    lentro = true;
-                //    break;
-                //}
-                //if (item.Value10.Split(';').Length > 1)
-                //{
-                //    lentro = true;
-                //    break;
-                //}
-                //if (item.Value11.Split(';').Length > 1)
-                //{
-                //    lentro = true;
-                //    break;
-                //}
-                //if (item.Value12.Split(';').Length > 1)
-                //{
-                //    lentro = true;
-                //    break;
-                //}
-                //if (item.Value13.Split(';').Length > 1)
-                //{
-                //    lentro = true;
-                //    break;
-                //}
-                //if (item.Value14.Split(';').Length > 1)
-                //{
-                //    lentro = true;
-                //    break;
-                //}
-                //if (item.Value15.Split(';').Length > 1)
-                //{
-                //    lentro = true;
-                //    break;
-                //}
-                //if (item.Value16.Split(';').Length > 1)
-                //{
-                //    lentro = true;
-                //    break;
-                //}
-                //if (item.Value17.Split(';').Length > 1)
-                //{
-                //    lentro = true;
-                //    break;
-                //}
-                //if (item.Value18.Split(';').Length > 1)
-                //{
-                //    lentro = true;
-                //    break;
-                //}
-                //if (item.Value19.Split(';').Length > 1)
-                //{
-                //    lentro = true;
-                //    break;
-                //}
-                //if (item.Value20.Split(';').Length > 1)
-                //{
-                //    lentro = true;
-                //    break;
-                //}
             }
 
             if (!lentro) // Adicionar la parte de la tabla de transiciones
@@ -254,6 +153,8 @@ namespace Compiladores2019.UI.Win
             {
                 itemGrid ig = new itemGrid();
                 ig.State = item;
+                if (txtAcceptations.Text.Contains(ig.State))
+                        ig.Result = 1;
                 transitions.Add(ig);
                 i++;
             }
@@ -285,6 +186,16 @@ namespace Compiladores2019.UI.Win
                 column.CellTemplate = cell;
                 dataGridView1.Columns.Add(column);
             }
+            column = new DataGridViewColumn();
+            column.HeaderText = "0: Rechaza/ 1: Acepta";
+            column.DataPropertyName = "Result";
+            column.Name = "Result";
+            column.Visible = true;
+            column.ReadOnly = true;
+            column.CellTemplate = cell;
+            dataGridView1.Columns.Add(column);
+
+
             dataGridView1.DataSource = transitions;
             btnValidacionAFND.Enabled = true;
 
@@ -293,21 +204,24 @@ namespace Compiladores2019.UI.Win
         private void dataGridView1_CellValidating(object sender, DataGridViewCellValidatingEventArgs e)
         {
             bool lentro = false;
-            string[] valores = e.FormattedValue.ToString().Split(';');
-            foreach (string item in valores)
+            if (dataGridView1.Columns.Count != e.ColumnIndex + 1)
             {
-                if (!string.IsNullOrEmpty(item.Trim()))
+                string[] valores = e.FormattedValue.ToString().Split(';');
+                foreach (string item in valores)
                 {
-                    if (states.Where(s => s == item).Count() == 0)
+                    if (!string.IsNullOrEmpty(item.Trim()))
                     {
-                        lentro = true;
-                        break;
+                        if (states.Where(s => s == item).Count() == 0)
+                        {
+                            lentro = true;
+                            break;
+                        }
                     }
                 }
             }
             if (lentro)
             {
-                MessageBox.Show("Debe ingresar estados adecuados", "Estados", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Debe ingresar estados válidos", "Estados", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
         }
@@ -325,7 +239,6 @@ namespace Compiladores2019.UI.Win
             itemGrid comparador = transitions.Where(a => a.State == value).FirstOrDefault();
             itemGrid addAFD = new itemGrid();
             addAFD.State = comparador.State;
-            value = comparador.Value1;
 
             AFD.Add(addAFD);
             Type type = typeof(itemGrid);
@@ -333,7 +246,7 @@ namespace Compiladores2019.UI.Win
             System.Reflection.PropertyInfo[] listaPropiedades = type.GetProperties();
             foreach (System.Reflection.PropertyInfo propiedad in listaPropiedades)
             {
-                if (propiedad.Name != "State")
+                if (propiedad.Name != "State" && propiedad.Name != "Result" )
                 {
                     value = propiedad.GetValue(comparador).ToString();
                     if (value != string.Empty)
@@ -371,7 +284,17 @@ namespace Compiladores2019.UI.Win
                 column.CellTemplate = cell;
                 dataGridView2.Columns.Add(column);
             }
+            column = new DataGridViewColumn();
+            column.HeaderText = "0: Rechaza / 1: Acepta";
+            column.DataPropertyName = "Result";
+            column.Name = "Result";
+            column.Visible = true;
+            column.ReadOnly = true;
+            column.CellTemplate = cell;
+            dataGridView2.Columns.Add(column);
+
             dataGridView2.DataSource = AFD;
+            btnNuevaTablaTransicion.Enabled = true;
         }
         private void Llenar(string value)
         {
@@ -380,6 +303,13 @@ namespace Compiladores2019.UI.Win
             if (comparador == null)
             {
                 ret.State = value;
+                if (ret.State != string.Empty)
+                {
+                    if (txtAcceptations.Text.Contains(ret.State))
+                    {
+                        ret.Result = 1;
+                    }
+                }
                 AFD.Add(ret);
                 string nval = string.Empty;
                 if (value.Contains(";"))
@@ -487,6 +417,73 @@ namespace Compiladores2019.UI.Win
                 //    Llenar(val);
                 //}
             }
+        }
+
+        private void btnNuevaTablaTransicion_Click(object sender, EventArgs e)
+        {
+            itemGrid ret = new itemGrid();
+            foreach (var item in AFD)
+            {
+                string value = string.Empty;
+                if (item.State != string.Empty)
+                {
+                    if (!item.State.Contains(";"))
+                    {
+                        ret = transitions.Where(t => t.State == item.State).FirstOrDefault();
+
+                        item.Value1 = ret.Value1 == string.Empty ? "ERROR" : ret.Value1;
+                        item.Value2 = ret.Value2 == string.Empty ? "ERROR" : ret.Value2;
+
+                    }
+                }
+                else
+                {
+                    item.State = "ERROR";
+                    item.Value1 = "ERROR";
+                    item.Value2 = "ERROR";
+                }
+                if (txtAcceptations.Text.Contains(item.State))
+                {
+                    item.Result = 1;
+                }
+            }
+
+            dataGridView2.Columns.Clear();
+            dataGridView2.AutoGenerateColumns = false;
+            DataGridViewCell cell = new DataGridViewTextBoxCell();
+
+            DataGridViewColumn column = new DataGridViewColumn();
+            column.HeaderText = "Estados";
+            column.DataPropertyName = "State";
+            column.Name = "State";
+            column.Visible = true;
+            column.ReadOnly = true;
+            column.CellTemplate = cell;
+            dataGridView2.Columns.Add(column);
+            
+            int i = 0;
+            foreach (var item in symbolsIn)
+            {
+                i++;
+                column = new DataGridViewColumn();
+                column.DataPropertyName = $"Value{i}";
+                column.Name = $"Value{i}";
+                column.HeaderText = item;
+                column.Visible = true;
+                column.ReadOnly = false;
+                column.CellTemplate = cell;
+                dataGridView2.Columns.Add(column);
+            }
+            column = new DataGridViewColumn();
+            column.HeaderText = "0: Rechaza / 1: Acepta";
+            column.DataPropertyName = "Result";
+            column.Name = "Result";
+            column.Visible = true;
+            column.ReadOnly = true;
+            column.CellTemplate = cell;
+            dataGridView2.Columns.Add(column);
+
+            dataGridView2.DataSource = AFD;
         }
     }
 }
