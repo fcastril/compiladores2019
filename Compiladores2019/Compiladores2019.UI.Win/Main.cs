@@ -305,7 +305,7 @@ namespace Compiladores2019.UI.Win
                 ret.State = value;
                 if (ret.State != string.Empty)
                 {
-                    if (txtAcceptations.Text.Contains(ret.State))
+                    if (ret.State.Contains(txtAcceptations.Text.Trim()))
                     {
                         ret.Result = 1;
                     }
@@ -433,6 +433,47 @@ namespace Compiladores2019.UI.Win
 
                         item.Value1 = ret.Value1 == string.Empty ? "ERROR" : ret.Value1;
                         item.Value2 = ret.Value2 == string.Empty ? "ERROR" : ret.Value2;
+                        item.Value3 = ret.Value3 == string.Empty ? "ERROR" : ret.Value3;
+                        item.Value4 = ret.Value4 == string.Empty ? "ERROR" : ret.Value4;
+                        item.Value5 = ret.Value5 == string.Empty ? "ERROR" : ret.Value5;
+                        item.Value6 = ret.Value6 == string.Empty ? "ERROR" : ret.Value6;
+                        item.Value7 = ret.Value7 == string.Empty ? "ERROR" : ret.Value7;
+                        item.Value8 = ret.Value8 == string.Empty ? "ERROR" : ret.Value8;
+                        item.Value9 = ret.Value9 == string.Empty ? "ERROR" : ret.Value9;
+                        item.Value10 = ret.Value10 == string.Empty ? "ERROR" : ret.Value10;
+                        item.Value11 = ret.Value11 == string.Empty ? "ERROR" : ret.Value11;
+                        item.Value12 = ret.Value12 == string.Empty ? "ERROR" : ret.Value12;
+                        item.Value13 = ret.Value13 == string.Empty ? "ERROR" : ret.Value13;
+                        item.Value14 = ret.Value14 == string.Empty ? "ERROR" : ret.Value14;
+                        item.Value15 = ret.Value15 == string.Empty ? "ERROR" : ret.Value15;
+                        item.Value16 = ret.Value16 == string.Empty ? "ERROR" : ret.Value16;
+                        item.Value17 = ret.Value17 == string.Empty ? "ERROR" : ret.Value17;
+                        item.Value18 = ret.Value18 == string.Empty ? "ERROR" : ret.Value18;
+                        item.Value19 = ret.Value19 == string.Empty ? "ERROR" : ret.Value19;
+                        item.Value20 = ret.Value20 == string.Empty ? "ERROR" : ret.Value20;
+                    }
+                    else
+                    {
+                        item.Value1 = AsignarValores(item.State, 1);
+                        item.Value2 = AsignarValores(item.State, 2);
+                        item.Value3 = AsignarValores(item.State, 3);
+                        item.Value4 = AsignarValores(item.State, 4);
+                        item.Value5 = AsignarValores(item.State, 5);
+                        item.Value6 = AsignarValores(item.State, 6);
+                        item.Value7 = AsignarValores(item.State, 7);
+                        item.Value8 = AsignarValores(item.State, 8);
+                        item.Value9 = AsignarValores(item.State, 9);
+                        item.Value10 = AsignarValores(item.State, 10);
+                        item.Value11 = AsignarValores(item.State, 11);
+                        item.Value12 = AsignarValores(item.State, 12);
+                        item.Value13 = AsignarValores(item.State, 13);
+                        item.Value14 = AsignarValores(item.State, 14);
+                        item.Value15 = AsignarValores(item.State, 15);
+                        item.Value16 = AsignarValores(item.State, 16);
+                        item.Value17 = AsignarValores(item.State, 17);
+                        item.Value18 = AsignarValores(item.State, 18);
+                        item.Value19 = AsignarValores(item.State, 19);
+                        item.Value20 = AsignarValores(item.State, 20);
 
                     }
                 }
@@ -447,6 +488,8 @@ namespace Compiladores2019.UI.Win
                     item.Result = 1;
                 }
             }
+
+            Limpiar();
 
             dataGridView2.Columns.Clear();
             dataGridView2.AutoGenerateColumns = false;
@@ -484,6 +527,115 @@ namespace Compiladores2019.UI.Win
             dataGridView2.Columns.Add(column);
 
             dataGridView2.DataSource = AFD;
+        }
+
+        private void Limpiar()
+        {
+            foreach (var item in AFD)
+            {
+                item.State = item.State.Replace(";", "");
+                item.Value1 = item.Value1.Replace(";", "");
+                item.Value2 = item.Value2.Replace(";", "");
+                item.Value3 = item.Value3.Replace(";", "");
+                item.Value4 = item.Value4.Replace(";", "");
+                item.Value5 = item.Value5.Replace(";", "");
+                item.Value6 = item.Value6.Replace(";", "");
+                item.Value7 = item.Value7.Replace(";", "");
+                item.Value8 = item.Value8.Replace(";", "");
+                item.Value9 = item.Value9.Replace(";", "");
+                item.Value10 = item.Value10.Replace(";", "");
+                item.Value11 = item.Value11.Replace(";", "");
+                item.Value12 = item.Value12.Replace(";", "");
+                item.Value13 = item.Value13.Replace(";", "");
+                item.Value14 = item.Value14.Replace(";", "");
+                item.Value15 = item.Value15.Replace(";", "");
+                item.Value16 = item.Value16.Replace(";", "");
+                item.Value17 = item.Value17.Replace(";", "");
+                item.Value18 = item.Value18.Replace(";", "");
+                item.Value19 = item.Value19.Replace(";", "");
+                item.Value20 = item.Value20.Replace(";", "");
+            }
+        }
+
+        private string AsignarValores(string state, int Value)
+        {
+            itemGrid ret = new itemGrid();
+            string value = string.Empty;
+            string Valor = string.Empty;
+            foreach (var states in state.Split(';'))
+            {
+                Valor = string.Empty;
+                ret = transitions.Where(t => t.State == states).FirstOrDefault();
+                value += value != string.Empty ? ";" : "";
+                switch (Value)
+                {
+                    case 1:
+                        Valor = ret.Value1;
+                        break;
+                    case 2:
+                        Valor = ret.Value2;
+                        break;
+                    case 3:
+                        Valor = ret.Value3;
+                        break;
+                    case 4:
+                        Valor = ret.Value4;
+                        break;
+                    case 5:
+                        Valor = ret.Value5;
+                        break;
+                    case 6:
+                        Valor = ret.Value6;
+                        break;
+                    case 7:
+                        Valor = ret.Value7;
+                        break;
+                    case 8:
+                        Valor = ret.Value8;
+                        break;
+                    case 9:
+                        Valor = ret.Value9;
+                        break;
+                    case 10:
+                        Valor = ret.Value10;
+                        break;
+                    case 11:
+                        Valor = ret.Value11;
+                        break;
+                    case 12:
+                        Valor = ret.Value12;
+                        break;
+                    case 13:
+                        Valor = ret.Value13;
+                        break;
+                    case 14:
+                        Valor = ret.Value14;
+                        break;
+                    case 15:
+                        Valor = ret.Value15;
+                        break;
+                    case 16:
+                        Valor = ret.Value16;
+                        break;
+                    case 17:
+                        Valor = ret.Value17;
+                        break;
+                    case 18:
+                        Valor = ret.Value18;
+                        break;
+                    case 19:
+                        Valor = ret.Value19;
+                        break;
+                    case 20:
+                        Valor = ret.Value20;
+                        break;
+                    default:
+                        Valor = "ERROR";
+                        break;
+                }
+                value += Valor;
+            }
+            return (value == string.Empty ? "ERROR" : value);
         }
     }
 }
