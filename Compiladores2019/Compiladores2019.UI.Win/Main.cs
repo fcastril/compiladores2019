@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows.Forms;
+using System.IO;
+using System.Text;
 
 namespace Compiladores2019.UI.Win
 {
@@ -20,6 +22,8 @@ namespace Compiladores2019.UI.Win
         private List<string> symbolsIn => Lista(txtSymbolsIN.Text.Split(';'));
         private List<itemGrid> transitions { get; set; }
         private List<itemGrid> AFD { get; set; }
+        private StringBuilder grafo { get; set; }
+        private string file => "imagen";
 
         private List<string> Lista(string[] data)
         {
@@ -32,7 +36,7 @@ namespace Compiladores2019.UI.Win
                     ret.Add(item.Trim());
                 }
             }
-            return ret;
+            return ret.OrderBy(x => x).ToList();
         }
 
         private void btnCancelar_Click(object sender, EventArgs e)
@@ -154,7 +158,7 @@ namespace Compiladores2019.UI.Win
                 itemGrid ig = new itemGrid();
                 ig.State = item;
                 if (txtAcceptations.Text.Contains(ig.State))
-                        ig.Result = 1;
+                    ig.Result = 1;
                 transitions.Add(ig);
                 i++;
             }
@@ -246,7 +250,7 @@ namespace Compiladores2019.UI.Win
             System.Reflection.PropertyInfo[] listaPropiedades = type.GetProperties();
             foreach (System.Reflection.PropertyInfo propiedad in listaPropiedades)
             {
-                if (propiedad.Name != "State" && propiedad.Name != "Result" )
+                if (propiedad.Name != "State" && propiedad.Name != "Result")
                 {
                     value = propiedad.GetValue(comparador).ToString();
                     if (value != string.Empty)
@@ -314,7 +318,7 @@ namespace Compiladores2019.UI.Win
                 string nval = string.Empty;
                 if (value.Contains(";"))
                 {
-                    foreach (string v in value.Split(';'))
+                    foreach (string v in value.Split(';').OrderBy(x => x))
                     {
                         if (v != string.Empty)
                         {
@@ -332,7 +336,7 @@ namespace Compiladores2019.UI.Win
                         Llenar(nval);
                     }
                     nval = string.Empty;
-                    foreach (string v in value.Split(';'))
+                    foreach (string v in value.Split(';').OrderBy(x => x))
                     {
                         if (v != string.Empty)
                         {
@@ -360,7 +364,7 @@ namespace Compiladores2019.UI.Win
                         if (val.Contains(";"))
                         {
                             nval = string.Empty;
-                            foreach (var v in val.Split(';'))
+                            foreach (var v in val.Split(';').OrderBy(x => x))
                             {
 
                                 if (v != string.Empty)
@@ -380,7 +384,7 @@ namespace Compiladores2019.UI.Win
                             }
 
                             nval = string.Empty;
-                            foreach (var v in val.Split(';'))
+                            foreach (var v in val.Split(';').OrderBy(x => x))
                             {
 
                                 if (v != string.Empty)
@@ -503,7 +507,7 @@ namespace Compiladores2019.UI.Win
             column.ReadOnly = true;
             column.CellTemplate = cell;
             dataGridView2.Columns.Add(column);
-            
+
             int i = 0;
             foreach (var item in symbolsIn)
             {
@@ -527,6 +531,7 @@ namespace Compiladores2019.UI.Win
             dataGridView2.Columns.Add(column);
 
             dataGridView2.DataSource = AFD;
+            btnGraficar.Enabled = true;
         }
 
         private void Limpiar()
@@ -562,7 +567,7 @@ namespace Compiladores2019.UI.Win
             itemGrid ret = new itemGrid();
             string value = string.Empty;
             string Valor = string.Empty;
-            foreach (var states in state.Split(';'))
+            foreach (var states in state.Split(';').OrderBy(x => x))
             {
                 Valor = string.Empty;
                 ret = transitions.Where(t => t.State == states).FirstOrDefault();
@@ -636,6 +641,123 @@ namespace Compiladores2019.UI.Win
                 value += Valor;
             }
             return (value == string.Empty ? "ERROR" : value);
+        }
+
+        private void btnGraficar_Click(object sender, EventArgs e)
+        {
+            GenerarGrafico();
+            if (File.Exists($"{file}.png"))
+            {
+                picture.Image = new System.Drawing.Bitmap($"{file}.png");
+            }
+        }
+
+        private void GenerarGrafico()
+        {
+            grafo = new StringBuilder();
+            string rdot = $"{file}.dot";
+            string rpng = $"{file}.png";
+            if (File.Exists($"{file}.dot"))
+                File.Delete($"{file}.dot");
+            if (File.Exists($"{file}.png"))
+                File.Delete($"{file}.png");
+            grafo.Append(GenerarDatosGraph());
+            GenerarDOT(rdot, rpng);
+
+        }
+        private void GenerarDOT(string rdot, string rpng)
+        {
+            File.WriteAllText(rdot, grafo.ToString());
+            string comandoDot = $"dot.exe -Tpng {rdot} -o {rpng}";
+            var procStart = new System.Diagnostics.ProcessStartInfo("cmd", "/C" + comandoDot);
+            var proc = new System.Diagnostics.Process();
+            proc.StartInfo = procStart;
+            proc.Start();
+            proc.WaitForExit();
+        }
+        private string GenerarDatosGraph()
+        {
+            //armar el archivo de texto
+
+            string data = "";
+            foreach (var value in AFD)
+            {
+                if (string.IsNullOrEmpty(data))
+                {
+                    data = $"start -> {value.State} ; {Environment.NewLine}";
+
+                }
+                if (value.Result == 1)
+                {
+                    data += $"{value.State} [peripheries=2] ; {Environment.NewLine}";
+                }
+                int CantidadSymbols = txtSymbolsIN.Text.Split(';').Count();
+                string[] symbols = txtSymbolsIN.Text.Split(';');
+                int i = 0;
+                i++;
+                if (CantidadSymbols >= i)
+                    data += $"{value.State} -> {value.Value1} [label=\"{symbols[i-1]}\"] ; {Environment.NewLine}";
+                i++;
+                if (CantidadSymbols >= i)
+                    data += $"{value.State} -> {value.Value2} [label=\"{symbols[i-1]}\"] ; {Environment.NewLine}";
+                i++;
+                if (CantidadSymbols >= i)
+                    data += $"{value.State} -> {value.Value3} [label=\"{symbols[i-1]}\"] ; {Environment.NewLine}";
+                i++;
+                if (CantidadSymbols >= i)
+                    data += $"{value.State} -> {value.Value4} [label=\"{symbols[i-1]}\"] ; {Environment.NewLine}";
+                i++;
+                if (CantidadSymbols >= i)
+                    data += $"{value.State} -> {value.Value5} [label=\"{symbols[i-1]}\"] ; {Environment.NewLine}";
+                i++;
+                if (CantidadSymbols >= i)
+                    data += $"{value.State} -> {value.Value6} [label=\"{symbols[i-1]}\"] ; {Environment.NewLine}";
+                i++;
+                if (CantidadSymbols >= i)
+                    data += $"{value.State} -> {value.Value7} [label=\"{symbols[i-1]}\"] ; {Environment.NewLine}";
+                i++;
+                if (CantidadSymbols >= i)
+                    data += $"{value.State} -> {value.Value8} [label=\"{symbols[i-1]}\"] ; {Environment.NewLine}";
+                i++;
+                if (CantidadSymbols >= i)
+                    data += $"{value.State} -> {value.Value9} [label=\"{symbols[i-1]}\"] ; {Environment.NewLine}";
+                i++;
+                if (CantidadSymbols >= i)
+                    data += $"{value.State} -> {value.Value10} [label=\"{symbols[i-1]}\"] ; {Environment.NewLine}";
+                i++;
+                if (CantidadSymbols >= i)
+                    data += $"{value.State} -> {value.Value11} [label=\"{symbols[i-1]}\"] ; {Environment.NewLine}";
+                i++;
+                if (CantidadSymbols >= i)
+                    data += $"{value.State} -> {value.Value12} [label=\"{symbols[i-1]}\"] ; {Environment.NewLine}";
+                i++;
+                if (CantidadSymbols >= i)
+                    data += $"{value.State} -> {value.Value13} [label=\"{symbols[i-1]}\"] ; {Environment.NewLine}";
+                i++;
+                if (CantidadSymbols >= i)
+                    data += $"{value.State} -> {value.Value14} [label=\"{symbols[i-1]}\"] ; {Environment.NewLine}";
+                i++;
+                if (CantidadSymbols >= i)
+                    data += $"{value.State} -> {value.Value15} [label=\"{symbols[i-1]}\"] ; {Environment.NewLine}";
+                i++;
+                if (CantidadSymbols >= i)
+                    data += $"{value.State} -> {value.Value16} [label=\"{symbols[i-1]}\"] ; {Environment.NewLine}";
+                i++;
+                if (CantidadSymbols >= i)
+                    data += $"{value.State} -> {value.Value17} [label=\"{symbols[i-1]}\"] ; {Environment.NewLine}";
+                i++;
+                if (CantidadSymbols >= i)
+                    data += $"{value.State} -> {value.Value18} [label=\"{symbols[i-1]}\"] ; {Environment.NewLine}";
+                i++;
+                if (CantidadSymbols >= i)
+                    data += $"{value.State} -> {value.Value19} [label=\"{symbols[i-1]}\"] ; {Environment.NewLine}";
+                i++;
+                if (CantidadSymbols >= i)
+                    data += $"{value.State} -> {value.Value20} [label=\"{symbols[i-1]}\"] ; {Environment.NewLine}";
+
+            }
+            return "digraph G {" + data + "}";
+
         }
     }
 }
