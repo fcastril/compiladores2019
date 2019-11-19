@@ -46,6 +46,8 @@
             this.btnNuevaTablaTransicion = new System.Windows.Forms.Button();
             this.btnGraficar = new System.Windows.Forms.Button();
             this.picture = new System.Windows.Forms.PictureBox();
+            this.lblExpresion = new System.Windows.Forms.Label();
+            this.txtExpresion = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.picture)).BeginInit();
@@ -233,11 +235,32 @@
             this.picture.TabIndex = 17;
             this.picture.TabStop = false;
             // 
+            // lblExpresion
+            // 
+            this.lblExpresion.AutoSize = true;
+            this.lblExpresion.Enabled = false;
+            this.lblExpresion.Location = new System.Drawing.Point(19, 372);
+            this.lblExpresion.Name = "lblExpresion";
+            this.lblExpresion.Size = new System.Drawing.Size(101, 13);
+            this.lblExpresion.TabIndex = 18;
+            this.lblExpresion.Text = "Expresión a Evaluar";
+            // 
+            // txtExpresion
+            // 
+            this.txtExpresion.Enabled = false;
+            this.txtExpresion.Location = new System.Drawing.Point(21, 387);
+            this.txtExpresion.Name = "txtExpresion";
+            this.txtExpresion.Size = new System.Drawing.Size(278, 20);
+            this.txtExpresion.TabIndex = 19;
+            this.txtExpresion.Validating += new System.ComponentModel.CancelEventHandler(this.txtExpresion_Validating);
+            // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1253, 779);
+            this.Controls.Add(this.txtExpresion);
+            this.Controls.Add(this.lblExpresion);
             this.Controls.Add(this.picture);
             this.Controls.Add(this.btnGraficar);
             this.Controls.Add(this.btnNuevaTablaTransicion);
@@ -286,6 +309,8 @@
         private System.Windows.Forms.Button btnNuevaTablaTransicion;
         private System.Windows.Forms.Button btnGraficar;
         private System.Windows.Forms.PictureBox picture;
+        private System.Windows.Forms.Label lblExpresion;
+        private System.Windows.Forms.TextBox txtExpresion;
     }
 }
 

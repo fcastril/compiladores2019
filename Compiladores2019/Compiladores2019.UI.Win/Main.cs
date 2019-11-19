@@ -2,10 +2,10 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Windows.Forms;
 using System.IO;
+using System.Linq;
 using System.Text;
+using System.Windows.Forms;
 
 namespace Compiladores2019.UI.Win
 {
@@ -19,7 +19,7 @@ namespace Compiladores2019.UI.Win
         private List<string> states => Lista(txtStates.Text.Split(';'));
         private List<string> statesBegin => Lista(txtStatesBegin.Text.Split(';'));
         private List<string> acceptations => Lista(txtAcceptations.Text.Split(';'));
-        private List<string> symbolsIn => Lista(txtSymbolsIN.Text.Split(';'));
+        private List<Symbols> symbolsIn => Lista(txtSymbolsIN.Text.Split(';'), true);
         private List<itemGrid> transitions { get; set; }
         private List<itemGrid> AFD { get; set; }
         private StringBuilder grafo { get; set; }
@@ -38,12 +38,24 @@ namespace Compiladores2019.UI.Win
             }
             return ret.OrderBy(x => x).ToList();
         }
-
+        private List<Symbols> Lista(string[] data, bool Doble)
+        {
+            List<Symbols> ret = new List<Symbols>();
+            int i = 0;           
+            foreach (string item in data)
+            {
+                i++;
+                if (!string.IsNullOrEmpty(item))
+                {
+                    ret.Add(new Symbols() { Symbol = item.Trim(), Value = $"Value{i}" });
+                }
+            }
+            return ret.OrderBy(x => x.Symbol).ToList();
+        }
         private void btnCancelar_Click(object sender, EventArgs e)
         {
             Application.Exit();
         }
-
         private void txtStatesBegin_Validating(object sender, CancelEventArgs e)
         {
             int conteo = 0;
@@ -60,7 +72,6 @@ namespace Compiladores2019.UI.Win
                 MessageBox.Show("Hay Estados Iniciales que no se encuentran en la definición de estados", "Estados Iniciales", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-
         private void txtAcceptations_Validating(object sender, CancelEventArgs e)
         {
             int conteo = 0;
@@ -77,7 +88,6 @@ namespace Compiladores2019.UI.Win
                 MessageBox.Show("Hay Estados Iniciales que no se encuentran en la definición de estados", "Estados Iniciales", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-
         private void btnValidacionAFND_Click(object sender, EventArgs e)
         {
             // Validación que para un AFND 
@@ -107,7 +117,7 @@ namespace Compiladores2019.UI.Win
             lentro = (statesBegin.Count() > 1);// Adicionar la parte de la tabla de transiciones
 
 
-            foreach (var item in transitions)
+            foreach (itemGrid item in transitions)
             {
                 string value = "";
                 Type type = typeof(itemGrid);
@@ -135,7 +145,7 @@ namespace Compiladores2019.UI.Win
                 }
 
             }
-
+           
             if (!lentro) // Adicionar la parte de la tabla de transiciones
             {
                 MessageBox.Show("NO! Un AFND debe tener más de un estado de inicio o un Estado tenga mas de una transición", "AFND", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -148,17 +158,21 @@ namespace Compiladores2019.UI.Win
             }
 
         }
-
         private void btnGenerar_Click(object sender, EventArgs e)
         {
             transitions = new List<itemGrid>();
             int i = 0;
-            foreach (var item in states)
+            foreach (string item in states)
             {
-                itemGrid ig = new itemGrid();
-                ig.State = item;
+                itemGrid ig = new itemGrid
+                {
+                    State = item
+                };
                 if (txtAcceptations.Text.Contains(ig.State))
+                {
                     ig.Result = 1;
+                }
+
                 transitions.Add(ig);
                 i++;
             }
@@ -168,35 +182,41 @@ namespace Compiladores2019.UI.Win
             dataGridView1.AutoGenerateColumns = false;
             DataGridViewCell cell = new DataGridViewTextBoxCell();
 
-            DataGridViewColumn column = new DataGridViewColumn();
-            column.HeaderText = "Estados";
-            column.DataPropertyName = "State";
-            column.Name = "State";
-            column.Visible = true;
-            column.ReadOnly = true;
-            column.CellTemplate = cell;
+            DataGridViewColumn column = new DataGridViewColumn
+            {
+                HeaderText = "Estados",
+                DataPropertyName = "State",
+                Name = "State",
+                Visible = true,
+                ReadOnly = true,
+                CellTemplate = cell
+            };
             dataGridView1.Columns.Add(column);
 
             i = 0;
             foreach (var item in symbolsIn)
             {
                 i++;
-                column = new DataGridViewColumn();
-                column.DataPropertyName = $"Value{i}";
-                column.Name = $"Value{i}";
-                column.HeaderText = item;
-                column.Visible = true;
-                column.ReadOnly = false;
-                column.CellTemplate = cell;
+                column = new DataGridViewColumn
+                {
+                    DataPropertyName = $"Value{i}",
+                    Name = $"Value{i}",
+                    HeaderText = item.Symbol,
+                    Visible = true,
+                    ReadOnly = false,
+                    CellTemplate = cell
+                };
                 dataGridView1.Columns.Add(column);
             }
-            column = new DataGridViewColumn();
-            column.HeaderText = "0: Rechaza/ 1: Acepta";
-            column.DataPropertyName = "Result";
-            column.Name = "Result";
-            column.Visible = true;
-            column.ReadOnly = true;
-            column.CellTemplate = cell;
+            column = new DataGridViewColumn
+            {
+                HeaderText = "0: Rechaza/ 1: Acepta",
+                DataPropertyName = "Result",
+                Name = "Result",
+                Visible = true,
+                ReadOnly = true,
+                CellTemplate = cell
+            };
             dataGridView1.Columns.Add(column);
 
 
@@ -204,7 +224,6 @@ namespace Compiladores2019.UI.Win
             btnValidacionAFND.Enabled = true;
 
         }
-
         private void dataGridView1_CellValidating(object sender, DataGridViewCellValidatingEventArgs e)
         {
             bool lentro = false;
@@ -229,7 +248,6 @@ namespace Compiladores2019.UI.Win
                 return;
             }
         }
-
         private void btnPaso01_Click(object sender, EventArgs e)
         {
             // recorrer matriz y crear la nueva con los estados de AFDN
@@ -241,8 +259,10 @@ namespace Compiladores2019.UI.Win
             // Verificar inicio
             value = txtStatesBegin.Text;
             itemGrid comparador = transitions.Where(a => a.State == value).FirstOrDefault();
-            itemGrid addAFD = new itemGrid();
-            addAFD.State = comparador.State;
+            itemGrid addAFD = new itemGrid
+            {
+                State = value
+            };
 
             AFD.Add(addAFD);
             Type type = typeof(itemGrid);
@@ -266,35 +286,41 @@ namespace Compiladores2019.UI.Win
             dataGridView2.AutoGenerateColumns = false;
             DataGridViewCell cell = new DataGridViewTextBoxCell();
 
-            DataGridViewColumn column = new DataGridViewColumn();
-            column.HeaderText = "Estados";
-            column.DataPropertyName = "State";
-            column.Name = "State";
-            column.Visible = true;
-            column.ReadOnly = true;
-            column.CellTemplate = cell;
+            DataGridViewColumn column = new DataGridViewColumn
+            {
+                HeaderText = "Estados",
+                DataPropertyName = "State",
+                Name = "State",
+                Visible = true,
+                ReadOnly = true,
+                CellTemplate = cell
+            };
             dataGridView2.Columns.Add(column);
 
             i = 0;
             foreach (var item in symbolsIn)
             {
                 i++;
-                column = new DataGridViewColumn();
-                column.DataPropertyName = $"Value{i}";
-                column.Name = $"Value{i}";
-                column.HeaderText = item;
-                column.Visible = true;
-                column.ReadOnly = false;
-                column.CellTemplate = cell;
+                column = new DataGridViewColumn
+                {
+                    DataPropertyName = $"Value{i}",
+                    Name = $"Value{i}",
+                    HeaderText = item.Symbol,
+                    Visible = true,
+                    ReadOnly = false,
+                    CellTemplate = cell
+                };
                 dataGridView2.Columns.Add(column);
             }
-            column = new DataGridViewColumn();
-            column.HeaderText = "0: Rechaza / 1: Acepta";
-            column.DataPropertyName = "Result";
-            column.Name = "Result";
-            column.Visible = true;
-            column.ReadOnly = true;
-            column.CellTemplate = cell;
+            column = new DataGridViewColumn
+            {
+                HeaderText = "0: Rechaza / 1: Acepta",
+                DataPropertyName = "Result",
+                Name = "Result",
+                Visible = true,
+                ReadOnly = true,
+                CellTemplate = cell
+            };
             dataGridView2.Columns.Add(column);
 
             dataGridView2.DataSource = AFD;
@@ -315,118 +341,70 @@ namespace Compiladores2019.UI.Win
                     }
                 }
                 AFD.Add(ret);
-                string nval = string.Empty;
                 if (value.Contains(";"))
                 {
-                    foreach (string v in value.Split(';').OrderBy(x => x))
+                    string nval = string.Empty;
+                    foreach (var item in value.Split(';'))
                     {
-                        if (v != string.Empty)
+                        ret = transitions.Where(a => a.State == item).FirstOrDefault();
+                        if (ret.Value1 != string.Empty)
                         {
-                            ret = transitions.Where(t => t.State == v).FirstOrDefault();
-                            if (ret.Value1 != string.Empty)
-                            {
-                                nval += nval.Length > 0 ? ";" : "";
-                                nval += $"{ret.Value1}";
-                            }
+                            nval += string.IsNullOrEmpty(nval) ? "" : ";";
+                            nval += ret.Value1;
                         }
                     }
-                    //     nval = nval == string.Empty ? "ERROR" : nval;
-                    if (AFD.Where(c => c.State == nval).Count() == 0)
-                    {
-                        Llenar(nval);
-                    }
+                    Llenar(nval);
                     nval = string.Empty;
-                    foreach (string v in value.Split(';').OrderBy(x => x))
+                    foreach (var item in value.Split(';'))
                     {
-                        if (v != string.Empty)
+                        ret = transitions.Where(a => a.State == item).FirstOrDefault();
+                        if (ret.Value2 != string.Empty)
                         {
-                            ret = transitions.Where(t => t.State == v).FirstOrDefault();
-                            if (ret.Value2 != string.Empty)
-                            {
-                                nval += nval.Length > 0 ? ";" : "";
-                                nval += $"{ret.Value2}";
-                            }
+                            nval += string.IsNullOrEmpty(nval) ? "" : ";";
+                            nval += ret.Value2;
                         }
                     }
-                    //   nval = nval == string.Empty ? "ERROR" : nval;
-                    if (AFD.Where(c => c.State == nval).Count() == 0)
+                    Llenar(nval);
+                    nval = string.Empty;
+                    foreach (var item in value.Split(';'))
                     {
-                        Llenar(nval);
+                        ret = transitions.Where(a => a.State == item).FirstOrDefault();
+                        if (ret.Value3 != string.Empty)
+                        {
+                            nval += string.IsNullOrEmpty(nval) ? "" : ";";
+                            nval += ret.Value3;
+                        }
                     }
-
+                    Llenar(nval);
+                    nval = string.Empty;
+                    foreach (var item in value.Split(';'))
+                    {
+                        ret = transitions.Where(a => a.State == item).FirstOrDefault();
+                        if (ret.Value4 != string.Empty)
+                        {
+                            nval += string.IsNullOrEmpty(nval) ? "" : ";";
+                            nval += ret.Value4;
+                        }
+                    }
+                    Llenar(nval);
                 }
                 else
                 {
-                    if (value != string.Empty)
+                    ret = transitions.Where(a => a.State == value).FirstOrDefault();
+                    if (ret != null)
                     {
-                        ret = transitions.Where(a => a.State == value).FirstOrDefault();
-                        string val = ret.Value1.Trim();
-                        if (val.Contains(";"))
-                        {
-                            nval = string.Empty;
-                            foreach (var v in val.Split(';').OrderBy(x => x))
-                            {
-
-                                if (v != string.Empty)
-                                {
-                                    ret = transitions.Where(t => t.State == v).FirstOrDefault();
-                                    if (ret.Value1 != string.Empty)
-                                    {
-                                        nval += nval.Length > 0 ? ";" : "";
-                                        nval += $"{ret.Value1}";
-                                    }
-                                }
-                            }
-                            //         nval = nval == string.Empty ? "ERROR" : nval;
-                            if (AFD.Where(c => c.State == nval).Count() == 0)
-                            {
-                                Llenar(nval);
-                            }
-
-                            nval = string.Empty;
-                            foreach (var v in val.Split(';').OrderBy(x => x))
-                            {
-
-                                if (v != string.Empty)
-                                {
-                                    ret = transitions.Where(t => t.State == v).FirstOrDefault();
-                                    if (ret.Value2 != string.Empty)
-                                    {
-                                        nval += nval.Length > 0 ? ";" : "";
-                                        nval += $"{ret.Value2}";
-                                    }
-                                }
-                            }
-                            // nval = nval == string.Empty ? "ERROR" : nval;
-                            if (AFD.Where(c => c.State == nval).Count() == 0)
-                            {
-                                Llenar(nval);
-                            }
-
-                        }
-                        else
-                        {
-                            //val = val == string.Empty ? "ERROR" : val;
-                            if (AFD.Where(c => c.State == val).Count() == 0)
-                            {
-                                Llenar(val);
-                            }
-                        }
+                        Llenar(ret.Value1);
+                        Llenar(ret.Value2);
+                        Llenar(ret.Value3);
+                        Llenar(ret.Value4);
                     }
                 }
-                //val = ret.Value2.Trim();
-                //val = val == string.Empty ? "ERROR" : val;
-                //if (AFD.Where(c => c.State == val).Count() == 0)
-                //{
-                //    Llenar(val);
-                //}
             }
         }
-
         private void btnNuevaTablaTransicion_Click(object sender, EventArgs e)
         {
             itemGrid ret = new itemGrid();
-            foreach (var item in AFD)
+            foreach (itemGrid item in AFD)
             {
                 string value = string.Empty;
                 if (item.State != string.Empty)
@@ -499,44 +477,49 @@ namespace Compiladores2019.UI.Win
             dataGridView2.AutoGenerateColumns = false;
             DataGridViewCell cell = new DataGridViewTextBoxCell();
 
-            DataGridViewColumn column = new DataGridViewColumn();
-            column.HeaderText = "Estados";
-            column.DataPropertyName = "State";
-            column.Name = "State";
-            column.Visible = true;
-            column.ReadOnly = true;
-            column.CellTemplate = cell;
+            DataGridViewColumn column = new DataGridViewColumn
+            {
+                HeaderText = "Estados",
+                DataPropertyName = "State",
+                Name = "State",
+                Visible = true,
+                ReadOnly = true,
+                CellTemplate = cell
+            };
             dataGridView2.Columns.Add(column);
 
             int i = 0;
             foreach (var item in symbolsIn)
             {
                 i++;
-                column = new DataGridViewColumn();
-                column.DataPropertyName = $"Value{i}";
-                column.Name = $"Value{i}";
-                column.HeaderText = item;
-                column.Visible = true;
-                column.ReadOnly = false;
-                column.CellTemplate = cell;
+                column = new DataGridViewColumn
+                {
+                    DataPropertyName = $"Value{i}",
+                    Name = $"Value{i}",
+                    HeaderText = item.Symbol,
+                    Visible = true,
+                    ReadOnly = false,
+                    CellTemplate = cell
+                };
                 dataGridView2.Columns.Add(column);
             }
-            column = new DataGridViewColumn();
-            column.HeaderText = "0: Rechaza / 1: Acepta";
-            column.DataPropertyName = "Result";
-            column.Name = "Result";
-            column.Visible = true;
-            column.ReadOnly = true;
-            column.CellTemplate = cell;
+            column = new DataGridViewColumn
+            {
+                HeaderText = "0: Rechaza / 1: Acepta",
+                DataPropertyName = "Result",
+                Name = "Result",
+                Visible = true,
+                ReadOnly = true,
+                CellTemplate = cell
+            };
             dataGridView2.Columns.Add(column);
 
             dataGridView2.DataSource = AFD;
             btnGraficar.Enabled = true;
         }
-
         private void Limpiar()
         {
-            foreach (var item in AFD)
+            foreach (itemGrid item in AFD)
             {
                 item.State = item.State.Replace(";", "");
                 item.Value1 = item.Value1.Replace(";", "");
@@ -561,13 +544,12 @@ namespace Compiladores2019.UI.Win
                 item.Value20 = item.Value20.Replace(";", "");
             }
         }
-
         private string AsignarValores(string state, int Value)
         {
             itemGrid ret = new itemGrid();
             string value = string.Empty;
             string Valor = string.Empty;
-            foreach (var states in state.Split(';').OrderBy(x => x))
+            foreach (string states in state.Split(';').OrderBy(x => x))
             {
                 Valor = string.Empty;
                 ret = transitions.Where(t => t.State == states).FirstOrDefault();
@@ -642,7 +624,6 @@ namespace Compiladores2019.UI.Win
             }
             return (value == string.Empty ? "ERROR" : value);
         }
-
         private void btnGraficar_Click(object sender, EventArgs e)
         {
             GenerarGrafico();
@@ -650,17 +631,24 @@ namespace Compiladores2019.UI.Win
             {
                 picture.Image = new System.Drawing.Bitmap($"{file}.png");
             }
+            lblExpresion.Enabled = true;
+            txtExpresion.Enabled = true;
         }
-
         private void GenerarGrafico()
         {
             grafo = new StringBuilder();
             string rdot = $"{file}.dot";
             string rpng = $"{file}.png";
             if (File.Exists($"{file}.dot"))
+            {
                 File.Delete($"{file}.dot");
+            }
+            picture.Image = null;
             if (File.Exists($"{file}.png"))
+            {
                 File.Delete($"{file}.png");
+            }
+
             grafo.Append(GenerarDatosGraph());
             GenerarDOT(rdot, rpng);
 
@@ -669,9 +657,11 @@ namespace Compiladores2019.UI.Win
         {
             File.WriteAllText(rdot, grafo.ToString());
             string comandoDot = $"dot.exe -Tpng {rdot} -o {rpng}";
-            var procStart = new System.Diagnostics.ProcessStartInfo("cmd", "/C" + comandoDot);
-            var proc = new System.Diagnostics.Process();
-            proc.StartInfo = procStart;
+            System.Diagnostics.ProcessStartInfo procStart = new System.Diagnostics.ProcessStartInfo("cmd", "/C" + comandoDot);
+            System.Diagnostics.Process proc = new System.Diagnostics.Process
+            {
+                StartInfo = procStart
+            };
             proc.Start();
             proc.WaitForExit();
         }
@@ -680,7 +670,7 @@ namespace Compiladores2019.UI.Win
             //armar el archivo de texto
 
             string data = "";
-            foreach (var value in AFD)
+            foreach (itemGrid value in AFD)
             {
                 if (string.IsNullOrEmpty(data))
                 {
@@ -696,68 +686,187 @@ namespace Compiladores2019.UI.Win
                 int i = 0;
                 i++;
                 if (CantidadSymbols >= i)
-                    data += $"{value.State} -> {value.Value1} [label=\"{symbols[i-1]}\"] ; {Environment.NewLine}";
-                i++;
-                if (CantidadSymbols >= i)
-                    data += $"{value.State} -> {value.Value2} [label=\"{symbols[i-1]}\"] ; {Environment.NewLine}";
-                i++;
-                if (CantidadSymbols >= i)
-                    data += $"{value.State} -> {value.Value3} [label=\"{symbols[i-1]}\"] ; {Environment.NewLine}";
-                i++;
-                if (CantidadSymbols >= i)
-                    data += $"{value.State} -> {value.Value4} [label=\"{symbols[i-1]}\"] ; {Environment.NewLine}";
-                i++;
-                if (CantidadSymbols >= i)
-                    data += $"{value.State} -> {value.Value5} [label=\"{symbols[i-1]}\"] ; {Environment.NewLine}";
-                i++;
-                if (CantidadSymbols >= i)
-                    data += $"{value.State} -> {value.Value6} [label=\"{symbols[i-1]}\"] ; {Environment.NewLine}";
-                i++;
-                if (CantidadSymbols >= i)
-                    data += $"{value.State} -> {value.Value7} [label=\"{symbols[i-1]}\"] ; {Environment.NewLine}";
-                i++;
-                if (CantidadSymbols >= i)
-                    data += $"{value.State} -> {value.Value8} [label=\"{symbols[i-1]}\"] ; {Environment.NewLine}";
-                i++;
-                if (CantidadSymbols >= i)
-                    data += $"{value.State} -> {value.Value9} [label=\"{symbols[i-1]}\"] ; {Environment.NewLine}";
-                i++;
-                if (CantidadSymbols >= i)
-                    data += $"{value.State} -> {value.Value10} [label=\"{symbols[i-1]}\"] ; {Environment.NewLine}";
-                i++;
-                if (CantidadSymbols >= i)
-                    data += $"{value.State} -> {value.Value11} [label=\"{symbols[i-1]}\"] ; {Environment.NewLine}";
-                i++;
-                if (CantidadSymbols >= i)
-                    data += $"{value.State} -> {value.Value12} [label=\"{symbols[i-1]}\"] ; {Environment.NewLine}";
-                i++;
-                if (CantidadSymbols >= i)
-                    data += $"{value.State} -> {value.Value13} [label=\"{symbols[i-1]}\"] ; {Environment.NewLine}";
-                i++;
-                if (CantidadSymbols >= i)
-                    data += $"{value.State} -> {value.Value14} [label=\"{symbols[i-1]}\"] ; {Environment.NewLine}";
-                i++;
-                if (CantidadSymbols >= i)
-                    data += $"{value.State} -> {value.Value15} [label=\"{symbols[i-1]}\"] ; {Environment.NewLine}";
-                i++;
-                if (CantidadSymbols >= i)
-                    data += $"{value.State} -> {value.Value16} [label=\"{symbols[i-1]}\"] ; {Environment.NewLine}";
-                i++;
-                if (CantidadSymbols >= i)
-                    data += $"{value.State} -> {value.Value17} [label=\"{symbols[i-1]}\"] ; {Environment.NewLine}";
-                i++;
-                if (CantidadSymbols >= i)
-                    data += $"{value.State} -> {value.Value18} [label=\"{symbols[i-1]}\"] ; {Environment.NewLine}";
-                i++;
-                if (CantidadSymbols >= i)
-                    data += $"{value.State} -> {value.Value19} [label=\"{symbols[i-1]}\"] ; {Environment.NewLine}";
-                i++;
-                if (CantidadSymbols >= i)
-                    data += $"{value.State} -> {value.Value20} [label=\"{symbols[i-1]}\"] ; {Environment.NewLine}";
+                {
+                    data += $"{value.State} -> {value.Value1} [label=\"{symbols[i - 1]}\"] ; {Environment.NewLine}";
+                }
 
+                i++;
+                if (CantidadSymbols >= i)
+                {
+                    data += $"{value.State} -> {value.Value2} [label=\"{symbols[i - 1]}\"] ; {Environment.NewLine}";
+                }
+
+                i++;
+                if (CantidadSymbols >= i)
+                {
+                    data += $"{value.State} -> {value.Value3} [label=\"{symbols[i - 1]}\"] ; {Environment.NewLine}";
+                }
+
+                i++;
+                if (CantidadSymbols >= i)
+                {
+                    data += $"{value.State} -> {value.Value4} [label=\"{symbols[i - 1]}\"] ; {Environment.NewLine}";
+                }
+
+                i++;
+                if (CantidadSymbols >= i)
+                {
+                    data += $"{value.State} -> {value.Value5} [label=\"{symbols[i - 1]}\"] ; {Environment.NewLine}";
+                }
+
+                i++;
+                if (CantidadSymbols >= i)
+                {
+                    data += $"{value.State} -> {value.Value6} [label=\"{symbols[i - 1]}\"] ; {Environment.NewLine}";
+                }
+
+                i++;
+                if (CantidadSymbols >= i)
+                {
+                    data += $"{value.State} -> {value.Value7} [label=\"{symbols[i - 1]}\"] ; {Environment.NewLine}";
+                }
+
+                i++;
+                if (CantidadSymbols >= i)
+                {
+                    data += $"{value.State} -> {value.Value8} [label=\"{symbols[i - 1]}\"] ; {Environment.NewLine}";
+                }
+
+                i++;
+                if (CantidadSymbols >= i)
+                {
+                    data += $"{value.State} -> {value.Value9} [label=\"{symbols[i - 1]}\"] ; {Environment.NewLine}";
+                }
+
+                i++;
+                if (CantidadSymbols >= i)
+                {
+                    data += $"{value.State} -> {value.Value10} [label=\"{symbols[i - 1]}\"] ; {Environment.NewLine}";
+                }
+
+                i++;
+                if (CantidadSymbols >= i)
+                {
+                    data += $"{value.State} -> {value.Value11} [label=\"{symbols[i - 1]}\"] ; {Environment.NewLine}";
+                }
+
+                i++;
+                if (CantidadSymbols >= i)
+                {
+                    data += $"{value.State} -> {value.Value12} [label=\"{symbols[i - 1]}\"] ; {Environment.NewLine}";
+                }
+
+                i++;
+                if (CantidadSymbols >= i)
+                {
+                    data += $"{value.State} -> {value.Value13} [label=\"{symbols[i - 1]}\"] ; {Environment.NewLine}";
+                }
+
+                i++;
+                if (CantidadSymbols >= i)
+                {
+                    data += $"{value.State} -> {value.Value14} [label=\"{symbols[i - 1]}\"] ; {Environment.NewLine}";
+                }
+
+                i++;
+                if (CantidadSymbols >= i)
+                {
+                    data += $"{value.State} -> {value.Value15} [label=\"{symbols[i - 1]}\"] ; {Environment.NewLine}";
+                }
+
+                i++;
+                if (CantidadSymbols >= i)
+                {
+                    data += $"{value.State} -> {value.Value16} [label=\"{symbols[i - 1]}\"] ; {Environment.NewLine}";
+                }
+
+                i++;
+                if (CantidadSymbols >= i)
+                {
+                    data += $"{value.State} -> {value.Value17} [label=\"{symbols[i - 1]}\"] ; {Environment.NewLine}";
+                }
+
+                i++;
+                if (CantidadSymbols >= i)
+                {
+                    data += $"{value.State} -> {value.Value18} [label=\"{symbols[i - 1]}\"] ; {Environment.NewLine}";
+                }
+
+                i++;
+                if (CantidadSymbols >= i)
+                {
+                    data += $"{value.State} -> {value.Value19} [label=\"{symbols[i - 1]}\"] ; {Environment.NewLine}";
+                }
+
+                i++;
+                if (CantidadSymbols >= i)
+                {
+                    data += $"{value.State} -> {value.Value20} [label=\"{symbols[i - 1]}\"] ; {Environment.NewLine}";
+                }
             }
             return "digraph G {" + data + "}";
 
+        }
+        private void txtExpresion_Validating(object sender, CancelEventArgs e)
+        {
+            string[] symbols = txtSymbolsIN.Text.Split(';');
+            string Value = txtExpresion.Text.Replace(";", "").Trim();
+
+            foreach (var item in symbolsIn)
+            {
+                Value = Value.Replace(item.Symbol, "").Trim();
+            }
+            if (!string.IsNullOrEmpty(Value))
+            {
+                MessageBox.Show("Debe digitar una expresión con los simbolos de entrada", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+
+
+            char[] Valores = txtExpresion.Text.Replace(";", "").Trim().ToCharArray();
+            itemGrid itemGrid = new itemGrid();
+            string TipoVal = string.Empty;
+            for (int y = 0; y < Valores.Length; y++)
+            {
+                if (y == 0)
+                {
+                    TipoVal = VerificacionRecursiva(txtStatesBegin.Text.Replace(";", ""), Valores[y].ToString());
+                }
+                else
+                {
+                    TipoVal = VerificacionRecursiva(TipoVal, Valores[y].ToString());
+                }
+            }
+            itemGrid = AFD.Where(afd => afd.State == TipoVal).FirstOrDefault();
+
+            if (itemGrid.Result == 1)
+            {
+                MessageBox.Show("ACEPTA");
+            }
+            else
+            {
+                MessageBox.Show("RECHAZA");
+            }
+        }
+        private string VerificacionRecursiva (string State, string Value)
+        {
+            string val = string.Empty;
+            itemGrid itemGrid = AFD.Where(inicio => inicio.State == State).FirstOrDefault();
+            string TipoVal = string.Empty;
+            TipoVal = symbolsIn.Where(s => s.Symbol == Value.ToString()).FirstOrDefault().Value;
+            switch (TipoVal)
+            {
+                case "Value1":
+                    val = itemGrid.Value1;
+                    break;
+                case "Value2":
+                    val = itemGrid.Value2;
+                    break;
+                default:
+                    break;
+            }
+            return val;
         }
     }
 }
